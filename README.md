@@ -24,6 +24,7 @@ Deep neural networks can be interpreted as consisting of two parts: feature extr
 ![Hidden Layers](dnn_hidden_layers.png)
 <center>Image taken from <a href="https://towardsdatascience.com/applied-deep-learning-part-1-artificial-neural-networks-d7834f67a4f6">TowardsDataScience</a></center>
 
+
 DCNNs, in particular, can be interpreted as extracting hierarchical features with convolutional and pooling layers that are then classified/regressed on in the final, fully connected output layers.
 
 ![Hierarchical Features](dcnn_feature_extraction.png)
@@ -272,6 +273,6 @@ sns.relplot(
 
 
 ## Conclusion
-The accuracy of a classifier trained on randomly initialized weights leads to comparable accuracies as a fully trained network when attempting. A simple non-linear classifier, as used in the semi-trained DCNN, shows accuracies notably better than random guessing (~10%) while a non-parametric, random forest classifier trained on the random-weight features will exhibit nearly equivalent accuracy as the fully trained DCNN. The random-weight features form distinct clusters that correspond to the digits they represent.
+The accuracy of a neural network trained on randomly initialized weights leads to comparable accuracies as a fully trained network when attempting to classify MNIST handwritten digits. A simple non-linear classifier (Extreme Learning Machine), as used in the semi-trained DCNN, shows accuracies notably better than random guessing (~10%) while a non-parametric, random forest classifier trained on the random-weight features will exhibit nearly equivalent accuracy as the fully trained DCNN. The random-weight features form distinct clusters that correspond to the digits they represent.
 
 These results indicate that the MNIST dataset is too trivial to serve as a benchmark dataset. Any conclusions drawn from this dataset most likely reflect this triviality more than the power of the research matter, e.g. network architectures or novel network elements.
