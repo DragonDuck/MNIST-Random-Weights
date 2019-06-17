@@ -1,4 +1,19 @@
 
+# Classifying MNIST with Random-Weight Features
+The MNIST dataset is a common "benchmark" dataset for deep learning tutorials and research, e.g. exploring new network architectures and network elements. However, the dataset itself is unsuitable for this task as it is too trivial. In this notebook, I show that classifying the digits of this dataset with a deep convolutional neural network (DCNN) is essentially a trivial task. For this, I compare the classification accuracy of a conventionally trained DCNN to the features extracted by an untrained, i.e. randomly initialized, DCNN. This comparison will highlight that training a neural network is unnecessary to accurately differentiate MNIST digits.
+
+Deep neural networks can be interpreted as consisting of two parts: feature extraction and classification/regression. The assignment of layers to roles is open to interpretation, but a simple interpretation is that the final output layer is the classification/regression layer and all hidden layers between input and output are responsible for feature extraction.
+
+![Hidden Layers](dnn_hidden_layers.png)
+<center>Image taken from <a href="https://towardsdatascience.com/applied-deep-learning-part-1-artificial-neural-networks-d7834f67a4f6">TowardsDataScience</a></center>
+
+DCNNs, in particular, can be interpreted as extracting hierarchical features of increasing complexity with convolutional and pooling layers that are then classified/regressed on in the final, fully connected output layers.
+
+![Hierarchical Features](dcnn_feature_extraction.png)
+<center>Image adapted from <a href="https://www.analyticsvidhya.com/blog/2017/04/comparison-between-deep-learning-machine-learning/">AnalyticsVidhya</a></center>
+
+## Imports
+
 
 ```python
 import keras
@@ -15,20 +30,6 @@ import matplotlib.pyplot as plt
 
     Using TensorFlow backend.
 
-
-# Classifying MNIST with Random-Weight Features
-The MNIST dataset is a common "benchmark" dataset for deep learning tutorials and research, e.g. exploring new network architectures and network elements. However, the dataset itself is unsuitable for this task as it is too trivial. In this notebook, I show that classifying the digits of this dataset with a deep convolutional neural network (DCNN) is essentially a trivial task. For this, I compare the classification accuracy of a conventionally trained DCNN to the features extracted by an untrained, i.e. randomly initialized, DCNN. This comparison will highlight that training a neural network is unnecessary to accurately differentiate MNIST digits as the random network does astonishingly well.
-
-Deep neural networks can be interpreted as consisting of two parts: feature extraction and classification/regression. The assignment of layers to roles is open to interpretation, but a simple interpretation is that the output layer is the classification/regression layer and all previous hidden layers are responsible for feature extraction.
-
-![Hidden Layers](dnn_hidden_layers.png)
-<center>Image taken from <a href="https://towardsdatascience.com/applied-deep-learning-part-1-artificial-neural-networks-d7834f67a4f6">TowardsDataScience</a></center>
-
-
-DCNNs, in particular, can be interpreted as extracting hierarchical features with convolutional and pooling layers that are then classified/regressed on in the final, fully connected output layers.
-
-![Hierarchical Features](dcnn_feature_extraction.png)
-<center>Image adapted from <a href="https://www.analyticsvidhya.com/blog/2017/04/comparison-between-deep-learning-machine-learning/">AnalyticsVidhya</a></center>
 
 ## Load Data
 
@@ -82,26 +83,32 @@ model.add(klay.Dense(
 
 # compile model
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-model.fit(x_train, y_train_cat, validation_data=(x_test, y_test_cat), epochs=5)
+model.fit(x_train, y_train_cat, validation_data=(x_test, y_test_cat), epochs=5, verbose=2)
 ```
 
+    WARNING:tensorflow:From /home/jan/anaconda3/envs/py3/lib/python3.7/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+    Instructions for updating:
+    Colocations handled automatically by placer.
+    WARNING:tensorflow:From /home/jan/anaconda3/envs/py3/lib/python3.7/site-packages/tensorflow/python/ops/math_ops.py:3066: to_int32 (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+    Instructions for updating:
+    Use tf.cast instead.
     Train on 60000 samples, validate on 10000 samples
     Epoch 1/5
-    60000/60000 [==============================] - 21s 354us/step - loss: 0.1868 - acc: 0.9423 - val_loss: 0.0626 - val_acc: 0.9792
+     - 30s - loss: 0.1837 - acc: 0.9446 - val_loss: 0.0675 - val_acc: 0.9785
     Epoch 2/5
-    60000/60000 [==============================] - 20s 335us/step - loss: 0.0609 - acc: 0.9809 - val_loss: 0.0371 - val_acc: 0.9874
+     - 26s - loss: 0.0586 - acc: 0.9817 - val_loss: 0.0491 - val_acc: 0.9840
     Epoch 3/5
-    60000/60000 [==============================] - 20s 338us/step - loss: 0.0437 - acc: 0.9862 - val_loss: 0.0370 - val_acc: 0.9883
+     - 29s - loss: 0.0432 - acc: 0.9869 - val_loss: 0.0398 - val_acc: 0.9874
     Epoch 4/5
-    60000/60000 [==============================] - 22s 366us/step - loss: 0.0354 - acc: 0.9885 - val_loss: 0.0302 - val_acc: 0.9899
+     - 30s - loss: 0.0361 - acc: 0.9889 - val_loss: 0.0410 - val_acc: 0.9867
     Epoch 5/5
-    60000/60000 [==============================] - 25s 424us/step - loss: 0.0283 - acc: 0.9912 - val_loss: 0.0306 - val_acc: 0.9906
+     - 30s - loss: 0.0296 - acc: 0.9909 - val_loss: 0.0360 - val_acc: 0.9881
 
 
 
 
 
-    <keras.callbacks.History at 0x12ef4cd30>
+    <keras.callbacks.History at 0x7fb88c4beb70>
 
 
 
@@ -113,7 +120,7 @@ cnn_acc = model.evaluate(x=x_test, y=y_test_cat, verbose=False)
 print("Trained CNN Accuracy = {}%".format(np.round(cnn_acc[1]*100, 2)))
 ```
 
-    Trained CNN Accuracy = 99.06%
+    Trained CNN Accuracy = 98.81%
 
 
 ## Extracting Features with Random Network Weights
@@ -166,7 +173,7 @@ print("Random Feature Accuracy = ({} +/- {})%".format(
     np.round(np.std(random_feature_accuracies)*100, 2)))
 ```
 
-    Random Feature Accuracy = (91.05 +/- 0.94)%
+    Random Feature Accuracy = (91.49 +/- 0.5)%
 
 
 
@@ -182,11 +189,11 @@ myFigure.ax.yaxis.set_major_formatter(
 ```
 
 
-![png](output_12_0.png)
+![png](output_13_0.png)
 
 
 ### Alternative Classifiers
-The single-layer classification step is relatively simple. We can also look at what happens if we classify the random-weight features, extracted from the second-to-last layer of the DCNN above, with a more sophisticated method such as a random forest
+The single-layer classification step is relatively simple. We can also look at what happens if we classify the random-weight features, extracted from the second-to-last layer of the DCNN above, with a more sophisticated method such as a random forest.
 
 
 ```python
@@ -215,7 +222,7 @@ print("Random Forest Accuracy on Random-Weight Features = ({} +/- {})%".format(
     np.round(np.std(random_feature_forest_accs)*100, 2)))
 ```
 
-    Random Forest Accuracy on Random-Weight Features = (95.09 +/- 0.4)%
+    Random Forest Accuracy on Random-Weight Features = (95.33 +/- 0.23)%
 
 
 
@@ -231,7 +238,7 @@ myFigure.ax.yaxis.set_major_formatter(
 ```
 
 
-![png](output_17_0.png)
+![png](output_18_0.png)
 
 
 #### Unsupervised Clustering
@@ -264,15 +271,15 @@ sns.relplot(
 
 
 
-    <seaborn.axisgrid.FacetGrid at 0x1a34b1e7f0>
+    <seaborn.axisgrid.FacetGrid at 0x7fb80844d780>
 
 
 
 
-![png](output_21_1.png)
+![png](output_22_1.png)
 
 
 ## Conclusion
-The accuracy of a neural network trained on randomly initialized weights leads to comparable accuracies as a fully trained network when attempting to classify MNIST handwritten digits. A simple non-linear classifier (Extreme Learning Machine), as used in the semi-trained DCNN, shows accuracies notably better than random guessing (~10%) while a non-parametric, random forest classifier trained on the random-weight features will exhibit nearly equivalent accuracy as the fully trained DCNN. The random-weight features form distinct clusters that correspond to the digits they represent.
+I have shown that initializing a neural network with random weights and subsequently training only the final output layer sufficiently classifies the MNIST handwritten digits. Simply training the final layer results in accuracies of $\sim 90\%$, far greater than what would be expected of random guessing ($\sim 10\%$), while a non-parametric, random forest classifier trained on the random-weight features will exhibit nearly equivalent accuracy as the fully trained DCNN ($\sim 95\%$) while requiring only a fraction of the training time.
 
 These results indicate that the MNIST dataset is too trivial to serve as a benchmark dataset. Any conclusions drawn from this dataset most likely reflect this triviality more than the power of the research matter, e.g. network architectures or novel network elements.
